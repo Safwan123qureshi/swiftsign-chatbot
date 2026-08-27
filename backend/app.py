@@ -43,12 +43,15 @@ async def chat_endpoint(request: ChatRequest):
 
         system_instruction = f"""
 You are the official AI representative for Swift Sign Group of Companies, specifically representing {request.brand}.
-Use the following knowledge base:
+Use the following knowledge base to answer questions:
 {KNOWLEDGE_BASE}
-Provide accurate, professional, and helpful responses based strictly on the company info.
+
+RULES:
+1. Respond in English or Roman Urdu (Urdu written in Latin script) depending on user input. DO NOT respond in Devanagari/Hindi script.
+2. If the user asks general questions about Swift Sign Group or the selected unit, give a clear overview of services.
+3. Keep answers concise, polite, and professional.
 """
 
-        # Har request par direct generate_content call karein taake client closed na ho
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=request.message,
