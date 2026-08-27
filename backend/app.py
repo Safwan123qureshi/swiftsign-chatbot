@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import google.generativeai as genai
+from google import genai
 
 try:
     from backend.knowledge_base import KNOWLEDGE_BASE
@@ -27,7 +27,7 @@ class ChatRequest(BaseModel):
     brand: str
     message: str
 
-chat_histories = {}
+chat_sessions = {}
 
 @app.get("/api/status")
 def status():
@@ -39,36 +39,29 @@ async def chat_endpoint(request: ChatRequest):
     try:
         api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
-            return {"response": "⚠️ GEMINI_API_KEY environment variable missing."}
+            return {"response": "⚠️ GEMINI_API_KEY environment variable missing on Vercel."}
 
-        genai.configure(api_key=api_key)
+        # Initialize client
+        client = genai.Client(api_key=api_key)
 
         session_id = request.session_id
         brand = request.brand
         user_message = request.message
 
-        if session_id not in chat_histories:
+        if session_id not in chat_sessions:
             system_instruction = f"""
 You are the official AI representative for Swift Sign Group of Companies, specifically representing {brand}.
 Use the following knowledge base:
 {KNOWLEDGE_BASE}
 Provide accurate, professional, and helpful responses based strictly on the company info.
 """
-            # Updated to flash-latest for v1beta compatibility
-            try:
-                model = genai.GenerativeModel(
-                    model_name="gemini-1.5-flash-latest",
-                    system_instruction=system_instruction
-                )
-                chat_histories[session_id] = model.start_chat(history=[])
-            except Exception:
-                model = genai.GenerativeModel(
-                    model_name="gemini-1.5-pro-latest",
-                    system_instruction=system_instruction
-                )
-                chat_histories[session_id] = model.start_chat(history=[])
+            # Using latest production stable model
+            chat_sessions[session_id] = client.chats.create(
+                model="gemini-2.5-flash",
+                config={"system_instruction": system_instruction}
+            )
 
-        chat = chat_histories[session_id]
+        chat = chat_sessions[session_id]
         response = chat.send_message(user_message)
         return {"response": response.text}
 
