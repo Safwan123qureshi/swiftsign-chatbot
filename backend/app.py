@@ -1,14 +1,17 @@
 import os
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import google.generativeai as genai
 
-# Relative import handling
+# Safe import for knowledge base
 try:
-    from .knowledge_base import KNOWLEDGE_BASE
+    from backend.knowledge_base import KNOWLEDGE_BASE
 except ImportError:
-    from knowledge_base import KNOWLEDGE_BASE
+    try:
+        from knowledge_base import KNOWLEDGE_BASE
+    except ImportError:
+        KNOWLEDGE_BASE = "Swift Sign Group official services and corporate details."
 
 app = FastAPI()
 
@@ -36,7 +39,7 @@ async def chat_endpoint(request: ChatRequest):
     try:
         api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
-            return {"response": "Error: GEMINI_API_KEY is not set in environment variables."}
+            return {"response": "⚠️ Error: GEMINI_API_KEY environment variable is missing on Vercel."}
 
         genai.configure(api_key=api_key)
 
@@ -51,7 +54,6 @@ Use the following knowledge base:
 {KNOWLEDGE_BASE}
 Provide accurate, professional, and helpful responses based strictly on the company info.
 """
-            # Updated to standard model string
             model = genai.GenerativeModel(
                 model_name="gemini-1.5-flash",
                 system_instruction=system_instruction
@@ -63,5 +65,5 @@ Provide accurate, professional, and helpful responses based strictly on the comp
         return {"response": response.text}
 
     except Exception as e:
-        # Front-end crash ke bajaye exact error return karega UI par
-        return {"response": f"Backend Error: {str(e)}"}
+        # Prevents Server 500 error and displays actual Python exception in chat UI
+        return {"response": f"⚠️ Backend Exception: {str(e)}"}
