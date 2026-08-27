@@ -187,7 +187,9 @@
         btnElement.classList.add('active');
         
         const welcomeMsg = document.getElementById('welcome-msg');
-        welcomeMsg.innerHTML = `Welcome to <b>Swift Sign Group</b>. Selected unit: <b>${brandName}</b>. How can we help you?`;
+        if (welcomeMsg) {
+            welcomeMsg.innerHTML = `Welcome to <b>Swift Sign Group</b>. Selected unit: <b>${brandName}</b>. How can we help you?`;
+        }
     }
 
     function handleKeyPress(event) {
@@ -227,14 +229,15 @@
             });
 
             if (!response.ok) {
-                throw new Error(`Server status: ${response.status}`);
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.detail || `Server status: ${response.status}`);
             }
 
             const data = await response.json();
             appendMessage(data.response, 'bot');
         } catch (error) {
             console.error('Fetch Error:', error);
-            appendMessage('⚠️ Could not connect to backend server. Make sure FastAPI server is running.', 'error');
+            appendMessage('⚠️ ' + error.message, 'error');
         }
     }
 </script>
