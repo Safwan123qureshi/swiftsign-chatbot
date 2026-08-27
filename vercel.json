@@ -4,12 +4,28 @@
     {
       "src": "backend/app.py",
       "use": "@vercel/python"
+    },
+    {
+      "src": "frontend/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/chat",
       "dest": "backend/app.py"
+    },
+    {
+      "src": "/history",
+      "dest": "backend/app.py"
+    },
+    {
+      "src": "/clear_history",
+      "dest": "backend/app.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/index.html"
     }
   ]
 }
