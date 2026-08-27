@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Swift Sign Group - AI Chatbot</title>
+    <title>Swift Sign Group AI Chatbot</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,29 +13,28 @@
         }
 
         body {
-            background-color: #f0f2f5;
+            background-color: #f4f6f8;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 15px;
+            padding: 20px;
         }
 
         .chat-container {
             width: 100%;
-            max-width: 480px;
-            height: 90vh;
-            max-height: 680px;
+            max-width: 500px;
             background: #ffffff;
             border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            height: 600px;
         }
 
         .chat-header {
-            background: #003366;
+            background-color: #003366;
             color: #ffffff;
             padding: 16px;
             text-align: center;
@@ -43,203 +42,202 @@
 
         .chat-header h2 {
             font-size: 1.2rem;
-            margin-bottom: 8px;
+            font-weight: 600;
         }
 
         .brand-selector {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 8px;
+            padding: 12px;
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
             justify-content: center;
-            padding: 10px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e9ecef;
         }
 
         .brand-btn {
-            background: #ffffff;
+            background-color: #ffffff;
             border: 1px solid #003366;
             color: #003366;
             padding: 6px 12px;
             border-radius: 16px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
         .brand-btn.active, .brand-btn:hover {
-            background: #003366;
+            background-color: #003366;
             color: #ffffff;
         }
 
-        .chat-box {
+        .chat-messages {
             flex: 1;
             padding: 16px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            background: #fafafa;
         }
 
         .message {
-            max-width: 85%;
+            max-width: 80%;
             padding: 10px 14px;
             border-radius: 10px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             line-height: 1.4;
-            white-space: pre-wrap;
-            word-wrap: break-word;
         }
 
-        .user-message {
-            align-self: flex-end;
-            background: #003366;
-            color: #ffffff;
-            border-bottom-right-radius: 2px;
-        }
-
-        .bot-message {
+        .message.system {
+            background-color: #f0f4f8;
+            color: #333333;
             align-self: flex-start;
-            background: #e9ecef;
-            color: #212529;
-            border-bottom-left-radius: 2px;
         }
 
-        .system-message {
-            align-self: center;
-            background: #e2e3e5;
-            color: #383d41;
-            font-size: 0.8rem;
-            text-align: center;
-            max-width: 95%;
+        .message.user {
+            background-color: #003366;
+            color: #ffffff;
+            align-self: flex-end;
         }
 
-        .input-area {
-            display: flex;
+        .message.bot {
+            background-color: #eef2f6;
+            color: #1a202c;
+            align-self: flex-start;
+        }
+
+        .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            align-self: flex-start;
+            border: 1px solid #fecaca;
+        }
+
+        .chat-input-container {
             padding: 12px;
-            background: #ffffff;
-            border-top: 1px solid #e9ecef;
+            background-color: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
             gap: 8px;
         }
 
-        .input-area input {
+        .chat-input {
             flex: 1;
             padding: 10px 14px;
-            border: 1px solid #ced4da;
-            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.95rem;
             outline: none;
-            font-size: 0.9rem;
         }
 
-        .input-area button {
-            background: #003366;
+        .chat-input:focus {
+            border-color: #003366;
+        }
+
+        .send-btn {
+            background-color: #003366;
             color: #ffffff;
             border: none;
             padding: 10px 18px;
-            border-radius: 8px;
+            border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
         }
 
-        .input-area button:hover {
-            background: #002244;
+        .send-btn:hover {
+            background-color: #002244;
         }
     </style>
 </head>
 <body>
 
-    <div class="chat-container">
-        <div class="chat-header">
-            <h2>Swift Sign Group of Companies</h2>
-        </div>
+<div class="chat-container">
+    <div class="chat-header">
+        <h2>Swift Sign Group of Companies</h2>
+    </div>
 
-        <div class="brand-selector">
-            <button class="brand-btn active" onclick="selectBrand('it_cyber', 'IT & Cyber Solutions')">IT & Cyber</button>
-            <button class="brand-btn" onclick="selectBrand('business_mgmt', 'Business Management')">Business Mgmt</button>
-            <button class="brand-btn" onclick="selectBrand('shipping_trading', 'Shipping & Trading')">Shipping & Trading</button>
-            <button class="brand-btn" onclick="selectBrand('laila_hijab', 'Laila Hijab')">Laila Hijab</button>
-            <button class="brand-btn" onclick="selectBrand('organic_food', 'Organic Food')">Organic Food</button>
-            <button class="brand-btn" onclick="selectBrand('corporate_info', 'Corporate Info')">Corporate Info</button>
-        </div>
+    <div class="brand-selector">
+        <button class="brand-btn active" onclick="selectBrand('IT & Cyber Solutions', this)">IT & Cyber</button>
+        <button class="brand-btn" onclick="selectBrand('Business Management', this)">Business Mgmt</button>
+        <button class="brand-btn" onclick="selectBrand('Shipping & Trading', this)">Shipping & Trading</button>
+        <button class="brand-btn" onclick="selectBrand('Laila Hijab', this)">Laila Hijab</button>
+        <button class="brand-btn" onclick="selectBrand('Organic Food', this)">Organic Food</button>
+        <button class="brand-btn" onclick="selectBrand('Corporate Info', this)">Corporate Info</button>
+    </div>
 
-        <div class="chat-box" id="chatBox">
-            <div class="message bot-message">Welcome to <b>Swift Sign Group</b>. Selected unit: <b>IT & Cyber Solutions</b>. How can we help you?</div>
-        </div>
-
-        <div class="input-area">
-            <input type="text" id="userInput" placeholder="Ask about services, locations, or contact..." onkeypress="handleKeyPress(event)">
-            <button onclick="sendMessage()">Send</button>
+    <div class="chat-messages" id="chat-messages">
+        <div class="message system" id="welcome-msg">
+            Welcome to <b>Swift Sign Group</b>. Selected unit: <b>IT & Cyber Solutions</b>. How can we help you?
         </div>
     </div>
 
-    <script>
-        let selectedBrandKey = "it_cyber";
-        let currentSessionId = "session_" + Math.random().toString(36).substring(2, 9);
+    <div class="chat-input-container">
+        <input type="text" id="user-input" class="chat-input" placeholder="Ask about services, locations, or contact..." onkeypress="handleKeyPress(event)">
+        <button class="send-btn" onclick="sendMessage()">Send</button>
+    </div>
+</div>
 
-        function selectBrand(key, displayName) {
-            selectedBrandKey = key;
-            
-            document.querySelectorAll('.brand-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+<script>
+    let currentBrand = "IT & Cyber Solutions";
+    let sessionId = "session_" + Math.random().toString(36).substring(2, 9);
 
-            appendMessage('system', `Switched context to <b>${displayName}</b>. How can I assist you with this division?`);
+    function selectBrand(brandName, btnElement) {
+        currentBrand = brandName;
+        document.querySelectorAll('.brand-btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+        
+        const welcomeMsg = document.getElementById('welcome-msg');
+        welcomeMsg.innerHTML = `Welcome to <b>Swift Sign Group</b>. Selected unit: <b>${brandName}</b>. How can we help you?`;
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
         }
+    }
 
-        function appendMessage(sender, text) {
-            const chatBox = document.getElementById('chatBox');
-            const msgDiv = document.createElement('div');
-            
-            if (sender === 'user') {
-                msgDiv.className = 'message user-message';
-                msgDiv.textContent = text;
-            } else if (sender === 'bot') {
-                msgDiv.className = 'message bot-message';
-                msgDiv.innerHTML = text.replace(/\n/g, '<br>');
-            } else {
-                msgDiv.className = 'message system-message';
-                msgDiv.innerHTML = text;
+    function appendMessage(text, sender) {
+        const chatMessages = document.getElementById('chat-messages');
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${sender}`;
+        msgDiv.innerText = text;
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function sendMessage() {
+        const inputField = document.getElementById('user-input');
+        const message = inputField.value.trim();
+        if (!message) return;
+
+        appendMessage(message, 'user');
+        inputField.value = '';
+
+        try {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    session_id: sessionId,
+                    brand: currentBrand,
+                    message: message
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Server status: ${response.status}`);
             }
 
-            chatBox.appendChild(msgDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            const data = await response.json();
+            appendMessage(data.response, 'bot');
+        } catch (error) {
+            console.error('Fetch Error:', error);
+            appendMessage('⚠️ Could not connect to backend server. Make sure FastAPI server is running.', 'error');
         }
+    }
+</script>
 
-        async function sendMessage() {
-            const input = document.getElementById('userInput');
-            const text = input.value.trim();
-
-            if (!text) return;
-
-            appendMessage('user', text);
-            input.value = '';
-
-            try {
-                    const response = await fetch('/chat', { ... } {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        session_id: currentSessionId,
-                        brand: selectedBrandKey,
-                        message: text
-                    })
-                });
-
-                const data = await response.json();
-                appendMessage('bot', data.response);
-
-            } catch (error) {
-                console.error(error);
-                appendMessage('bot', '⚠️ Could not connect to backend server. Make sure FastAPI server is running.');
-            }
-        }
-
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        }
-    </script>
 </body>
 </html>
