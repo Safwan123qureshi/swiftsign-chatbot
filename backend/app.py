@@ -27,8 +27,6 @@ class ChatRequest(BaseModel):
     brand: str
     message: str
 
-chat_sessions = {}
-
 @app.get("/api/status")
 def status():
     return {"status": "Active", "message": "Swift Sign Group AI Server is running."}
@@ -41,28 +39,22 @@ async def chat_endpoint(request: ChatRequest):
         if not api_key:
             return {"response": "⚠️ GEMINI_API_KEY environment variable missing on Vercel."}
 
-        # Initialize client
         client = genai.Client(api_key=api_key)
 
-        session_id = request.session_id
-        brand = request.brand
-        user_message = request.message
-
-        if session_id not in chat_sessions:
-            system_instruction = f"""
-You are the official AI representative for Swift Sign Group of Companies, specifically representing {brand}.
+        system_instruction = f"""
+You are the official AI representative for Swift Sign Group of Companies, specifically representing {request.brand}.
 Use the following knowledge base:
 {KNOWLEDGE_BASE}
 Provide accurate, professional, and helpful responses based strictly on the company info.
 """
-            # Using latest production stable model
-            chat_sessions[session_id] = client.chats.create(
-                model="gemini-2.5-flash",
-                config={"system_instruction": system_instruction}
-            )
 
-        chat = chat_sessions[session_id]
-        response = chat.send_message(user_message)
+        # Har request par direct generate_content call karein taake client closed na ho
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=request.message,
+            config={"system_instruction": system_instruction}
+        )
+
         return {"response": response.text}
 
     except Exception as e:
